@@ -6,7 +6,7 @@
     var srcdiv = d3.select("#srctext")
     var tgtdiv = d3.select("#tgttext")
 
-    d3.select('#analysispanel').style('left', parseInt($(window).width() * .75) + 'px').style('position', 'fixed')
+    d3.select('#analysispanel').style('left', parseInt($(window).width() * .68) + 'px').style('position', 'fixed')
 
     d3.json("sentsInOrder.json", function (data) {
 
@@ -34,7 +34,6 @@
                 .append('mark')
                 .attr('id', function (d, j) { return 'srcsent' + i + 'token' + j })
                 .html(function (d) {
-
                     return d.text + ' '
                 })
                 .style('background-color', 'white')
