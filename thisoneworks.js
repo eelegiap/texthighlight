@@ -14,35 +14,48 @@
 
 
         // APPEND SOURCE SENTENCES
-        var spanhtml = ''
+        // var spanhtml = ''
         data.srcSentsInOrder.text.forEach(function (sent, i) {
-            // srcdiv
-            //     .append('span')
-            //     .attr('id', 'srcsent' + i)
-            //     .attr('class', 'sentence chosen')
+            srcdiv
+                .append('span')
+                .attr('id', 'srcsent' + i)
+                .attr('class', 'sentence chosen')
 
             var tokens = data.srcSentsInOrder.tokens[i]
-            var tokenshtml = ''
+            // var tokenshtml = ''
             tokens.forEach(function (t, j) {
                 srccharcount += t.text.length
-                tokenshtml = tokenshtml +`<span id="srcsent${i}span${j}" class="token"><mark id="srcsent${i}token${j}">${t.text}/</mark></span>`
+                // tokenshtml = tokenshtml +`<span id="srcsent${i}span${j}" class="token"><mark id="srcsent${i}token${j}">${t.text}</mark></span>`
             })
-            spanhtml = spanhtml + `<span id="srcsent${i}" class="sentence chosen">${tokenshtml}</span>`
-            // d3.select('#srcsent' + i)
-            //     .selectAll('div')
-            //     .data(tokens)
-            //     .enter()
-            //     .append('span')
-            //     .attr('id', function (d, j) { return 'srcsent' + i + 'span' + j })
-            //     .attr('class', 'token')
-            //     .append('mark')
-            //     .attr('id', function (d, j) { return 'srcsent' + i + 'token' + j })
-            //     .html(function (d) {
-            //         return d.text +' '
-            //     })
-            //     .style('background-color', 'white')
+            // spanhtml = spanhtml + `<span id="srcsent${i}" class="sentence chosen">${tokenshtml}</span>`
+            d3.select('#srcsent' + i)
+                .selectAll('div')
+                .data(tokens)
+                .enter()
+                .append('span')
+                .attr('id', function (d, j) { return 'srcsent' + i + 'span' + j })
+                .attr('class', 'token')
+                .append('mark')
+                .attr('id', function (d, j) { return 'srcsent' + i + 'token' + j })
+                .html(function (d, j) {
+                    return spacenospace(tokens, d, j)
+                })
+                .style('background-color', 'white')
         })
-        d3.select('#srctext').html(spanhtml)
+
+        function spacenospace(tokens, d, j) {
+            if (j < tokens.length-1) {
+                if ('.,)?'.includes(tokens[j+1].text)) {
+                    return d.text
+                } 
+            } 
+            if ('(¿'.includes(d.text)) {
+                return d.text
+            }
+
+            return d.text + ' '
+        }
+                // d3.select('#srctext').html(spanhtml)
 
 
         // APPEND TARGET SENTENCES
@@ -68,7 +81,7 @@
                 .append('mark')
                 .attr('id', function (d, j) { return ('tgtsent' + i + 'token' + j) })
                 .html(function (d, j) {
-                    return d.text + ' '
+                    return spacenospace(tokens, d, j)
                 })
                 .style('background-color', 'white')
         })
@@ -114,10 +127,10 @@
             d3.selectAll(("input[name='level']")).on("change", function () {
                 if (this.value == 'wordlevel') {
                     d3.selectAll('.sentence').classed('chosen', false)
-                    d3.selectAll('.token').selectAll('mark').classed('chosen', true)
+                    d3.selectAll('.token').classed('chosen', true)
                 } else {
                     d3.selectAll('.sentence').classed('chosen', true)
-                    d3.selectAll('.token').selectAll('mark').classed('chosen', false)
+                    d3.selectAll('.token').classed('chosen', false)
                 }
             })
 
@@ -126,6 +139,7 @@
                 var chosenElt = d3.select(this)
                 if (chosenElt.classed('chosen')) {
                     var chosenID = chosenElt.attr('id')
+
                     var index1 = chosenID.replace('sent', '').replace('src', '').replace('tgt', '')
 
                     if (chosenID.includes('src')) {
@@ -135,22 +149,23 @@
                         var which = 'src'
                         var index2 = tgt2src['sentences'][index1]
                     }
-                    chosenElt.selectAll('span.token mark').transition().style('background-color', 'aqua')
-                    d3.select('#' + which + 'sent' + index2).selectAll('span.token mark').transition().style('background-color', 'aqua')
+
+                    chosenElt.selectAll('span.token').transition().style('background-color', 'aqua')
+                    d3.select('#' + which + 'sent' + index2).selectAll('span.token').transition().style('background-color', 'aqua')
                 }
             })
             d3.selectAll('.sentence').on('mouseout', function () {
-                d3.selectAll('.sentence').selectAll('span.token mark').transition().style('background-color', 'white')
+                d3.selectAll('.sentence').selectAll('span.token').transition().style('background-color', 'white')
             })
 
             // HOVER TOKENS
             d3.selectAll('.token').on('mouseover', function () {
-                var chosenElt = d3.select(this).select('mark')
+                var chosenElt = d3.select(this)
                 if (chosenElt.classed('chosen')) {
                     var chosenID = chosenElt.attr('id')
-
-                    var sentidx1 = chosenID.split('token')[0].replace('sent', '').replace('src', '').replace('tgt', '')
-                    var tokenidx1 = chosenID.split('token')[1]
+                    console.log('token ohover')
+                    var sentidx1 = chosenID.split('span')[0].replace('sent', '').replace('src', '').replace('tgt', '')
+                    var tokenidx1 = chosenID.split('span')[1]
                     var exists = true
                     if (chosenID.includes('src')) {
                         var which = 'tgt'
@@ -167,7 +182,7 @@
                     }
                     if (exists) {
                         chosenElt.transition().style('background-color', 'aqua')
-                        d3.select('#' + which + 'sent' + sentidx2 + 'token' + tokenidx2).transition().style('background-color', 'aqua')
+                        d3.select('#' + which + 'sent' + sentidx2 + 'span' + tokenidx2).transition().style('background-color', 'aqua')
                     } else {
                         d3.select(this).style('cursor', 'default')
                     }
@@ -182,18 +197,18 @@
                 $("#ngramtitle").empty();
                 $("#ngramviewer").empty();
 
-                var chosenElt = d3.select(this).select('mark')
+                var chosenElt = d3.select(this)
                 if (chosenElt.classed('chosen')) {
                     var chosenID = chosenElt.attr('id')
-                    var sentidx1 = chosenID.split('token')[0].replace('sent', '').replace('src', '').replace('tgt', '')
-                    var tokenidx1 = chosenID.split('token')[1]
+                    var sentidx1 = chosenID.split('span')[0].replace('sent', '').replace('src', '').replace('tgt', '')
+                    var tokenidx1 = chosenID.split('span')[1]
                     var exists = true
                     if (chosenID.includes('src')) {
                         var which = 'tgt'
                         try {
                             var sentidx2 = src2tgt['sentences'][sentidx1]
                             var tokenidx2 = src2tgt['tokens'][sentidx1][tokenidx1]
-                            var tgttoken = d3.select('#' + which + 'sent' + sentidx2 + 'token' + tokenidx2).text()
+                            var tgttoken = d3.select('#' + which + 'sent' + sentidx2 + 'span' + tokenidx2).text()
                             var srctoken = chosenElt.text()
                         } catch { exists = false }
                     } else {
@@ -201,7 +216,7 @@
                         try {
                             var sentidx2 = tgt2src['sentences'][sentidx1]
                             var tokenidx2 = tgt2src['tokens'][sentidx1][tokenidx1]
-                            var srctoken = d3.select('#' + which + 'sent' + sentidx2 + 'token' + tokenidx2).text()
+                            var srctoken = d3.select('#' + which + 'sent' + sentidx2 + 'span' + tokenidx2).text()
                             var tgttoken = chosenElt.text()
                         } catch { exists = false }
                     }
