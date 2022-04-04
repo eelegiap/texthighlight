@@ -12,6 +12,8 @@
 
         var srccharcount = 0; var tgtcharcount = 0;
 
+
+        // APPEND SOURCE SENTENCES
         // var spanhtml = ''
         data.srcSentsInOrder.text.forEach(function (sent, i) {
             srcdiv
@@ -20,7 +22,7 @@
                 .attr('class', 'sentence chosen')
 
             var tokens = data.srcSentsInOrder.tokens[i]
-            var tokenshtml = ''
+            // var tokenshtml = ''
             tokens.forEach(function (t, j) {
                 srccharcount += t.text.length
                 // tokenshtml = tokenshtml +`<span id="srcsent${i}span${j}" class="token"><mark id="srcsent${i}token${j}">${t.text}</mark></span>`
@@ -40,7 +42,9 @@
                 })
                 .style('background-color', 'white')
         })
+        // d3.select('#srctext').html(spanhtml)
 
+        // APPEND TARGET SENTENCES
         data.tgtSentsInOrder.text.forEach(function (sent, i) {
             tgtdiv
                 .append('span')
@@ -69,13 +73,16 @@
         })
         var totalcharcount = srccharcount + tgtcharcount
 
+        // MAKE SURE CORRECT WIDTH
         var srccolwidth = parseInt(srccharcount / totalcharcount * ($(window).width() - 100) * .66)
         var tgtcolwidth = parseInt(tgtcharcount / totalcharcount * ($(window).width() - 100) * .66)
         var analysiswidth = parseInt(($(window).width() - 100) * .33)
 
         d3.select('.wrapper').style('grid-template-columns', `${srccolwidth}px ${tgtcolwidth}px ${analysiswidth}px`)
 
+
         d3.json('wordAlignment.json', function (wadata) {
+
             var src2tgt = Object()
             var tgt2src = Object()
             src2tgt['sentences'] = Object()
@@ -83,6 +90,7 @@
             tgt2src['sentences'] = Object()
             tgt2src['tokens'] = Object()
 
+            // CREATE WORD AND SENTENCE ALIGNMENT LOOKUP
             wadata.forEach(function (s) {
                 // sent level
                 var i = s.srcsentidx
@@ -112,7 +120,7 @@
                 }
             })
 
-
+            // HOVER SENTENCES
             d3.selectAll('.sentence').on('mouseover', function () {
                 var chosenElt = d3.select(this)
                 if (chosenElt.classed('chosen')) {
@@ -134,7 +142,7 @@
                 d3.selectAll('.sentence').selectAll('span.token mark').transition().style('background-color', 'white')
             })
 
-
+            // HOVER TOKENS
             d3.selectAll('.token').on('mouseover', function () {
                 var chosenElt = d3.select(this).select('mark')
                 if (chosenElt.classed('chosen')) {
@@ -167,6 +175,8 @@
             d3.selectAll('.token').on('mouseout', function () {
                 d3.selectAll('.token').selectAll('mark').transition().style('background-color', 'white')
             })
+
+            // CLICK TOKENS
             d3.selectAll('.token').on('click', function () {
                 $("#ngramtitle").empty();
                 $("#ngramviewer").empty();
