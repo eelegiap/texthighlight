@@ -12,6 +12,7 @@
 
         var srccharcount = 0; var tgtcharcount = 0;
 
+        // var spanhtml = ''
         data.srcSentsInOrder.text.forEach(function (sent, i) {
             srcdiv
                 .append('span')
@@ -19,11 +20,12 @@
                 .attr('class', 'sentence chosen')
 
             var tokens = data.srcSentsInOrder.tokens[i]
-
-            tokens.forEach(function (t) {
+            var tokenshtml = ''
+            tokens.forEach(function (t, j) {
                 srccharcount += t.text.length
+                // tokenshtml = tokenshtml +`<span id="srcsent${i}span${j}" class="token"><mark id="srcsent${i}token${j}">${t.text}</mark></span>`
             })
-
+            // spanhtml = spanhtml + `<span id="srcsent${i}" class="sentence chosen">${tokenshtml}</span>`
             d3.select('#srcsent' + i)
                 .selectAll('span')
                 .data(tokens)

@@ -40,7 +40,6 @@
             min-height: 400px;
             overflow: auto;
         }
-
     </style>
 </head>
 
@@ -49,10 +48,6 @@
         <div class="row">
             <div class="col-md-12">
                 <h2>WADL</h2>
-                <form id="form">
-                    <input type="radio" name="level" value="sentlevel" checked> Sentence Level<br>
-                    <input type="radio" name="level" value="wordlevel"> Word Level
-                </form>
                 <br>
             </div>
         </div>
@@ -67,6 +62,11 @@
             </div>
             <div id='analysispanel'>
                 <h4>Analysis Panel</h4>
+                <form id="form">
+                    <input type="radio" name="level" value="sentlevel" checked> Sentence Level<br>
+                    <input type="radio" name="level" value="wordlevel"> Word Level
+                </form>
+                <br>
                 <p>Charts and information on <span id="wordpair" style="font-weight: bold;">[choose a word]</span></p>
                 <br>
                 <p>So much analysis. Charts. Graphs. Exciting things here.</p>
