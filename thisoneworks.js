@@ -8,7 +8,17 @@
 
     d3.select('#analysispanel').style('left', parseInt($(window).width() * .68) + 'px').style('position', 'fixed')
 
-    d3.json("sentsInOrder.json", function (data) {
+    // var lang;
+    // d3.selectAll(("input[name='language']")).on("change", function () {
+    //     if (this.value == 'spanish') {
+    //         lang = 'spanish'
+    //     } else {
+    //         lang = 'russian'
+    //     }
+    // })
+    var lang = 'russian'
+    
+    d3.json(lang+"/sentsInOrder.json", function (data) {
 
         var srccharcount = 0; var tgtcharcount = 0;
 
@@ -90,12 +100,13 @@
         // MAKE SURE CORRECT WIDTH
         var srccolwidth = parseInt(srccharcount / totalcharcount * ($(window).width() - 100) * .66)
         var tgtcolwidth = parseInt(tgtcharcount / totalcharcount * ($(window).width() - 100) * .66)
+        console.log(srccolwidth, tgtcolwidth)
         var analysiswidth = parseInt(($(window).width() - 100) * .33)
 
         d3.select('.wrapper').style('grid-template-columns', `${srccolwidth}px ${tgtcolwidth}px ${analysiswidth}px`)
 
 
-        d3.json('wordAlignment.json', function (wadata) {
+        d3.json(lang+'/wordAlignment.json', function (wadata) {
 
             var src2tgt = Object()
             var tgt2src = Object()
@@ -237,7 +248,13 @@
                         for (const token of array) {
                             // for ngram viewer
                             if (index != 1) {
-                                direct_url = direct_url + token + '%3Aspa_2019%3B%2Cc0%3B.t1%3B%2C';
+                                var corpus = ''
+                                if (lang == 'spanish') {
+                                    corpus = 'spa_2019'
+                                } else if (lang == 'russian') {
+                                    corpus = 'rus_2019'
+                                }
+                                direct_url = direct_url + token + '%3A'+corpus+'%3B%2Cc0%3B.t1%3B%2C';
                                 content = content + token + '%2C+'
                             }
                             else {
